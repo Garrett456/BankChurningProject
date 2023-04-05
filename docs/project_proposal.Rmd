@@ -1,0 +1,99 @@
+---
+title: "Project Proposal"
+author: "Garrett Marshall"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+
+## Appendix:
+
+```{r include=FALSE}
+library(tidyverse)
+library(reshape2)
+```
+
+```{r warning=FALSE, message=FALSE}
+# import data
+churn <- read_csv("Churn_Modeling.csv")
+```
+
+```{r}
+# cleaning the data
+
+# make gender numerical
+churn$GenderNew <- if_else( churn$Gender == "Male", 1, 0 )
+
+# remove irrelevant columns
+churn <- churn %>% select( c(-'RowNumber', -'CustomerId', -'Surname', -'Gender') )
+
+# view data
+head(churn)
+```
+
+
+
+```{r}
+# create a correlation heat map
+
+churn <- churn %>% select( c(-'Geography') )
+corr <- round( cor(churn), 2 )
+melted_corr <- melt(corr)
+head(melted_corr)
+
+heat_map <- ggplot(data = melted_corr, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_text(aes(Var2, Var1, label = value), size = 4) +
+  scale_fill_gradient2(low = "grey", high = "darkred",
+                       limit = c(-1,1), name="Correlation", mid = "orange") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        panel.background = element_blank()) +
+  labs( title = "Correlation Heat Map")
+```
+
+
+
+## Introduction:
+
+The topic I chose to study for my final project is banking. Specifically, analyzing whether or not a customer will churn (stop using the bank). The data set I will be analyzing is called "Bank Customers Churn" from Kaggle (https://www.kaggle.com/datasets/samuelcortinhas/credit-card-approval-clean-data?select=clean_dataset.csv). I chose to study this topic simply because I found it the most interesting while searching for data sets on Kaggle. Bank churning analysis is very important to the banking industry. This is because it is much more costly for banks to obtain new customers than it is to keep existing customers. Making it very important to keep your customers happy and using your business.
+
+Fortunately, the data is already pretty clean. One thing I had to do was remove irrelevant columns as they will not provide any important information in my analysis. These columns are 'RowNumber', 'CustomerId', and 'Surname'. Taking a look at the new structure of the data:
+
+```{r}
+# view structure
+str(churn)
+```
+This data set contains $10,000$ observations and $11$ variables. The majority of the data is numerical except for the 'Geography' variable. There are quite a few binary variables like 'Gender', 'HasCrCard', 'IsActiveMember', and 'Exited'. All of the variables were pretty self explainatory except for 'NumOfProducts', but with some digging I found out that this just means the number of accounts or the other products the customers have with the bank like fixed deposits, car insurance, or home loans.
+
+4 categorical variables: Geography, Gender, HasCrCard, and IsActiveMember.
+6 continuous variables: CreditScore, Age, Tenure, Balance, NumOfProducts, EstimatedSalary.
+Target variable: Exited (Binary).
+
+Next I wanted to see the relationships between the variables. I decided to use a correlation heat map for this.
+
+```{r fig.height=6, fig.width=9}
+heat_map
+```
+Looking at the heat map above we can conclude that none of the variables are dependent on one another.
+
+
+## Analysis:
+
+Since I will be modeling a binary variable, the classification methods I would like to include in my analysis are logistic regression, linear discriminant analysis, and quadratic discriminant analysis. I am interested to learn more about neural networks and decision trees so I would like to incorporate these in my analysis as well. I will also include hypothesis tests in my analysis but I do not know the specifics yet.
+
+
+## Goals:
+
+My main goal for this project is to apply what I have learned in this class to this project and succeed in producing a correct final product and a deeper understanding of key concepts. In my final product, I expect to apply the modelling methods I listed above to the data and give a detailed written explanation of the results. I also want to understand why some methods worked better than others and explain that in my essay.
+
+
+## Appendix:
+
+
+
+
+
+
+
+
